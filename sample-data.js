@@ -2,63 +2,376 @@
 // Updated with 39 real user names distributed across 9 teams
 
 // User Database - 39 members distributed across 9 teams
+// Enhanced with GPS coordinates (Phường Bình Phú area), address, phone, CCCD for map feature
 const dqp10_users = [
-  // Tổ 1 (4 members)
-  { name: "Ngô Trương Định", team: "Tổ 1" },
-  { name: "Ngô Hoài Bảo", team: "Tổ 1" },
-  { name: "Nguyễn Lý Minh Quang", team: "Tổ 1" },
-  { name: "Nguyễn Thành Tài", team: "Tổ 1" },
-  
-  // Tổ 2 (5 members)
-  { name: "Lý Triệu An", team: "Tổ 2" },
-  { name: "Phạm Gia Bảo", team: "Tổ 2" },
-  { name: "Lâm Ngọc Huyền", team: "Tổ 2" },
-  { name: "Đoàn Quốc Đạt", team: "Tổ 2" },
-  { name: "Nguyễn Thanh Nhân", team: "Tổ 2" },
-  
-  // Tổ 3 (5 members)
-  { name: "Phan Phong Phú", team: "Tổ 3" },
-  { name: "Trương Giang Minh Tùng", team: "Tổ 3" },
-  { name: "Lương Triệu Phát", team: "Tổ 3" },
-  { name: "Nguyễn Tấn Thuận", team: "Tổ 3" },
-  { name: "Nguyễn Ngọc Tiến", team: "Tổ 3" },
-  
-  // Tổ 4 (4 members)
-  { name: "Lại Tu Trung", team: "Tổ 4" },
-  { name: "Kiều Gia Huy", team: "Tổ 4" },
-  { name: "Lâm Ngọc Yến", team: "Tổ 4" },
-  { name: "Trần Minh Hiếu", team: "Tổ 4" },
-  
-  // Tổ 5 (4 members)
-  { name: "Võ Công Minh", team: "Tổ 5" },
-  { name: "Võ Trần Vinh", team: "Tổ 5" },
-  { name: "Nguyễn Đăng Đông", team: "Tổ 5" },
-  { name: "Lê Minh Hoàng", team: "Tổ 5" },
-  
-  // Tổ 6 (5 members)
-  { name: "Trần Hoàng Phi", team: "Tổ 6" },
-  { name: "Lưu Vĩnh Cơ", team: "Tổ 6" },
-  { name: "Lê Hải Triều", team: "Tổ 6" },
-  { name: "Hoàng Phạm Thế Lộc", team: "Tổ 6" },
-  { name: "Vương Quý Thắng", team: "Tổ 6" },
-  
-  // Tổ 7 (4 members)
-  { name: "La Gia Huy", team: "Tổ 7" },
-  { name: "Nguyễn Trung Kiên", team: "Tổ 7" },
-  { name: "Nguyễn Ngọc Sơn", team: "Tổ 7" },
-  { name: "Trần Anh Tuấn", team: "Tổ 7" },
-  
-  // Tổ 8 (4 members)
-  { name: "Trương Tấn Khương", team: "Tổ 8" },
-  { name: "Nguyễn Ngô Hoàng Phương", team: "Tổ 8" },
-  { name: "Đặng Trung Hảo", team: "Tổ 8" },
-  { name: "Lê Gia Triết", team: "Tổ 8" },
-  
-  // Tổ 9 (4 members)
-  { name: "Cao Thanh Long", team: "Tổ 9" },
-  { name: "Lê Huỳnh Ái Nhi", team: "Tổ 9" },
-  { name: "Nguyễn Anh Chiến", team: "Tổ 9" },
-  { name: "Hà Thanh Huy", team: "Tổ 9" }
+  // Tổ 1 (4 members) - Khu phố 1-2 area
+  {
+    name: "Ngô Trương Định",
+    team: "Tổ 1",
+    address: "12 Đường Bình Phú, KP.1",
+    lat: 10.7531,
+    lng: 106.6272,
+    phone: "0901234001",
+    cccd: "079201001001",
+  },
+  {
+    name: "Ngô Hoài Bảo",
+    team: "Tổ 1",
+    address: "45 Đường Lê Tấn Kế, KP.1",
+    lat: 10.7537,
+    lng: 106.6265,
+    phone: "0901234002",
+    cccd: "079201001002",
+  },
+  {
+    name: "Nguyễn Lý Minh Quang",
+    team: "Tổ 1",
+    address: "78 Đường Bình Phú, KP.2",
+    lat: 10.7525,
+    lng: 106.6281,
+    phone: "0901234003",
+    cccd: "079201001003",
+  },
+  {
+    name: "Nguyễn Thành Tài",
+    team: "Tổ 1",
+    address: "23 Đường Hồ Học Lãm, KP.2",
+    lat: 10.7542,
+    lng: 106.6258,
+    phone: "0901234004",
+    cccd: "079201001004",
+  },
+
+  // Tổ 2 (5 members) - Khu phố 3-4 area
+  {
+    name: "Lý Triệu An",
+    team: "Tổ 2",
+    address: "156 Đường Bình Phú, KP.3",
+    lat: 10.7518,
+    lng: 106.6293,
+    phone: "0901234005",
+    cccd: "079201001005",
+  },
+  {
+    name: "Phạm Gia Bảo",
+    team: "Tổ 2",
+    address: "89 Đường An Dương Vương, KP.3",
+    lat: 10.7512,
+    lng: 106.6301,
+    phone: "0901234006",
+    cccd: "079201001006",
+  },
+  {
+    name: "Lâm Ngọc Huyền",
+    team: "Tổ 2",
+    address: "34 Đường Hồ Học Lãm, KP.4",
+    lat: 10.7548,
+    lng: 106.6245,
+    phone: "0901234007",
+    cccd: "079201001007",
+  },
+  {
+    name: "Đoàn Quốc Đạt",
+    team: "Tổ 2",
+    address: "67 Đường Bình Phú, KP.4",
+    lat: 10.7505,
+    lng: 106.6312,
+    phone: "0901234008",
+    cccd: "079201001008",
+  },
+  {
+    name: "Nguyễn Thanh Nhân",
+    team: "Tổ 2",
+    address: "201 Đường An Dương Vương, KP.3",
+    lat: 10.7522,
+    lng: 106.6288,
+    phone: "0901234009",
+    cccd: "079201001009",
+  },
+
+  // Tổ 3 (5 members) - Khu phố 5-6 area
+  {
+    name: "Phan Phong Phú",
+    team: "Tổ 3",
+    address: "15 Đường Lê Tấn Kế, KP.5",
+    lat: 10.7555,
+    lng: 106.6238,
+    phone: "0901234010",
+    cccd: "079201001010",
+  },
+  {
+    name: "Trương Giang Minh Tùng",
+    team: "Tổ 3",
+    address: "92 Đường Bình Phú, KP.5",
+    lat: 10.7498,
+    lng: 106.6318,
+    phone: "0901234011",
+    cccd: "079201001011",
+  },
+  {
+    name: "Lương Triệu Phát",
+    team: "Tổ 3",
+    address: "41 Đường Hồ Học Lãm, KP.6",
+    lat: 10.7561,
+    lng: 106.6252,
+    phone: "0901234012",
+    cccd: "079201001012",
+  },
+  {
+    name: "Nguyễn Tấn Thuận",
+    team: "Tổ 3",
+    address: "128 Đường An Dương Vương, KP.6",
+    lat: 10.7509,
+    lng: 106.6305,
+    phone: "0901234013",
+    cccd: "079201001013",
+  },
+  {
+    name: "Nguyễn Ngọc Tiến",
+    team: "Tổ 3",
+    address: "56 Đường Bình Phú, KP.5",
+    lat: 10.754,
+    lng: 106.6275,
+    phone: "0901234014",
+    cccd: "079201001014",
+  },
+
+  // Tổ 4 (4 members) - Khu phố 7-8 area
+  {
+    name: "Lại Tu Trung",
+    team: "Tổ 4",
+    address: "73 Đường Lê Tấn Kế, KP.7",
+    lat: 10.7515,
+    lng: 106.6298,
+    phone: "0901234015",
+    cccd: "079201001015",
+  },
+  {
+    name: "Kiều Gia Huy",
+    team: "Tổ 4",
+    address: "104 Đường Bình Phú, KP.7",
+    lat: 10.7552,
+    lng: 106.6242,
+    phone: "0901234016",
+    cccd: "079201001016",
+  },
+  {
+    name: "Lâm Ngọc Yến",
+    team: "Tổ 4",
+    address: "38 Đường Hồ Học Lãm, KP.8",
+    lat: 10.7528,
+    lng: 106.6268,
+    phone: "0901234017",
+    cccd: "079201001017",
+  },
+  {
+    name: "Trần Minh Hiếu",
+    team: "Tổ 4",
+    address: "167 Đường An Dương Vương, KP.8",
+    lat: 10.7545,
+    lng: 106.6255,
+    phone: "0901234018",
+    cccd: "079201001018",
+  },
+
+  // Tổ 5 (4 members) - Khu phố 9-10 area
+  {
+    name: "Võ Công Minh",
+    team: "Tổ 5",
+    address: "25 Đường Bình Phú, KP.9",
+    lat: 10.7502,
+    lng: 106.6322,
+    phone: "0901234019",
+    cccd: "079201001019",
+  },
+  {
+    name: "Võ Trần Vinh",
+    team: "Tổ 5",
+    address: "86 Đường Lê Tấn Kế, KP.9",
+    lat: 10.7558,
+    lng: 106.6235,
+    phone: "0901234020",
+    cccd: "079201001020",
+  },
+  {
+    name: "Nguyễn Đăng Đông",
+    team: "Tổ 5",
+    address: "143 Đường Hồ Học Lãm, KP.10",
+    lat: 10.7535,
+    lng: 106.6262,
+    phone: "0901234021",
+    cccd: "079201001021",
+  },
+  {
+    name: "Lê Minh Hoàng",
+    team: "Tổ 5",
+    address: "59 Đường An Dương Vương, KP.10",
+    lat: 10.752,
+    lng: 106.6285,
+    phone: "0901234022",
+    cccd: "079201001022",
+  },
+
+  // Tổ 6 (5 members) - Khu phố 11-12 area
+  {
+    name: "Trần Hoàng Phi",
+    team: "Tổ 6",
+    address: "31 Đường Bình Phú, KP.11",
+    lat: 10.7495,
+    lng: 106.6325,
+    phone: "0901234023",
+    cccd: "079201001023",
+  },
+  {
+    name: "Lưu Vĩnh Cơ",
+    team: "Tổ 6",
+    address: "112 Đường Lê Tấn Kế, KP.11",
+    lat: 10.7565,
+    lng: 106.623,
+    phone: "0901234024",
+    cccd: "079201001024",
+  },
+  {
+    name: "Lê Hải Triều",
+    team: "Tổ 6",
+    address: "48 Đường Hồ Học Lãm, KP.12",
+    lat: 10.7508,
+    lng: 106.6308,
+    phone: "0901234025",
+    cccd: "079201001025",
+  },
+  {
+    name: "Hoàng Phạm Thế Lộc",
+    team: "Tổ 6",
+    address: "175 Đường An Dương Vương, KP.12",
+    lat: 10.755,
+    lng: 106.6248,
+    phone: "0901234026",
+    cccd: "079201001026",
+  },
+  {
+    name: "Vương Quý Thắng",
+    team: "Tổ 6",
+    address: "64 Đường Bình Phú, KP.11",
+    lat: 10.7538,
+    lng: 106.627,
+    phone: "0901234027",
+    cccd: "079201001027",
+  },
+
+  // Tổ 7 (4 members) - Khu phố 13 area
+  {
+    name: "La Gia Huy",
+    team: "Tổ 7",
+    address: "19 Đường Bình Phú, KP.13",
+    lat: 10.7492,
+    lng: 106.633,
+    phone: "0901234028",
+    cccd: "079201001028",
+  },
+  {
+    name: "Nguyễn Trung Kiên",
+    team: "Tổ 7",
+    address: "95 Đường Lê Tấn Kế, KP.13",
+    lat: 10.7568,
+    lng: 106.6227,
+    phone: "0901234029",
+    cccd: "079201001029",
+  },
+  {
+    name: "Nguyễn Ngọc Sơn",
+    team: "Tổ 7",
+    address: "52 Đường Hồ Học Lãm, KP.13",
+    lat: 10.7533,
+    lng: 106.6278,
+    phone: "0901234030",
+    cccd: "079201001030",
+  },
+  {
+    name: "Trần Anh Tuấn",
+    team: "Tổ 7",
+    address: "138 Đường An Dương Vương, KP.13",
+    lat: 10.751,
+    lng: 106.6302,
+    phone: "0901234031",
+    cccd: "079201001031",
+  },
+
+  // Tổ 8 (4 members) - Khu phố 14-15 area
+  {
+    name: "Trương Tấn Khương",
+    team: "Tổ 8",
+    address: "82 Đường Bình Phú, KP.14",
+    lat: 10.75,
+    lng: 106.6315,
+    phone: "0901234032",
+    cccd: "079201001032",
+  },
+  {
+    name: "Nguyễn Ngô Hoàng Phương",
+    team: "Tổ 8",
+    address: "27 Đường Lê Tấn Kế, KP.14",
+    lat: 10.7562,
+    lng: 106.624,
+    phone: "0901234033",
+    cccd: "079201001033",
+  },
+  {
+    name: "Đặng Trung Hảo",
+    team: "Tổ 8",
+    address: "146 Đường Hồ Học Lãm, KP.15",
+    lat: 10.7527,
+    lng: 106.6273,
+    phone: "0901234034",
+    cccd: "079201001034",
+  },
+  {
+    name: "Lê Gia Triết",
+    team: "Tổ 8",
+    address: "71 Đường An Dương Vương, KP.15",
+    lat: 10.7543,
+    lng: 106.626,
+    phone: "0901234035",
+    cccd: "079201001035",
+  },
+
+  // Tổ 9 (4 members) - Khu phố 16 area
+  {
+    name: "Cao Thanh Long",
+    team: "Tổ 9",
+    address: "108 Đường Bình Phú, KP.16",
+    lat: 10.7517,
+    lng: 106.6295,
+    phone: "0901234036",
+    cccd: "079201001036",
+  },
+  {
+    name: "Lê Huỳnh Ái Nhi",
+    team: "Tổ 9",
+    address: "43 Đường Lê Tấn Kế, KP.16",
+    lat: 10.7557,
+    lng: 106.6237,
+    phone: "0901234037",
+    cccd: "079201001037",
+  },
+  {
+    name: "Nguyễn Anh Chiến",
+    team: "Tổ 9",
+    address: "189 Đường Hồ Học Lãm, KP.16",
+    lat: 10.753,
+    lng: 106.6282,
+    phone: "0901234038",
+    cccd: "079201001038",
+  },
+  {
+    name: "Hà Thanh Huy",
+    team: "Tổ 9",
+    address: "55 Đường An Dương Vương, KP.16",
+    lat: 10.7548,
+    lng: 106.625,
+    phone: "0901234039",
+    cccd: "079201001039",
+  },
 ];
 
 // Sample Activities with updated user assignments
@@ -82,7 +395,7 @@ const sampleActivities = [
         dueDate: "08/01/2026",
         reportFields: [],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Chụp ảnh quay phim tư liệu",
@@ -91,21 +404,19 @@ const sampleActivities = [
         dueDate: "15/01/2026",
         reportFields: [
           { name: "Số lượng ảnh" },
-          { name: "Thời lượng video (phút)" }
+          { name: "Thời lượng video (phút)" },
         ],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức biên tập hình ảnh",
         team: "Tổ 4",
         assignees: "Lâm Ngọc Yến",
         dueDate: "20/01/2026",
-        reportFields: [
-          { name: "Số ảnh đã biên tập" }
-        ],
+        reportFields: [{ name: "Số ảnh đã biên tập" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Chuẩn bị hệ thống tư trang",
@@ -114,14 +425,14 @@ const sampleActivities = [
         dueDate: "18/01/2026",
         reportFields: [
           { name: "Số lượng trang phục" },
-          { name: "Số lượng vũ khí" }
+          { name: "Số lượng vũ khí" },
         ],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-05T08:00:00Z"
+    createdAt: "2026-01-05T08:00:00Z",
   },
   {
     id: 2,
@@ -140,11 +451,9 @@ const sampleActivities = [
         team: "Tổ 2",
         assignees: "Lý Triệu An",
         dueDate: "12/01/2026",
-        reportFields: [
-          { name: "Nội dung đào tạo" }
-        ],
+        reportFields: [{ name: "Nội dung đào tạo" }],
         notes: "Chuẩn bị giáo án chi tiết",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức huấn luyện thực hành",
@@ -153,10 +462,10 @@ const sampleActivities = [
         dueDate: "25/01/2026",
         reportFields: [
           { name: "Số học viên tham gia" },
-          { name: "Điểm đánh giá trung bình" }
+          { name: "Điểm đánh giá trung bình" },
         ],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Kiểm tra đánh giá kết quả",
@@ -165,14 +474,14 @@ const sampleActivities = [
         dueDate: "28/01/2026",
         reportFields: [
           { name: "Số người đạt" },
-          { name: "Số người không đạt" }
+          { name: "Số người không đạt" },
         ],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-01-08T09:30:00Z"
+    createdAt: "2026-01-08T09:30:00Z",
   },
   {
     id: 3,
@@ -191,12 +500,9 @@ const sampleActivities = [
         team: "Tổ 3",
         assignees: "Phan Phong Phú",
         dueDate: "08/01/2026",
-        reportFields: [
-          { name: "Tổng số súng" },
-          { name: "Tổng số đạn" }
-        ],
+        reportFields: [{ name: "Tổng số súng" }, { name: "Tổng số đạn" }],
         notes: "Báo cáo chi tiết theo từng loại",
-        completed: true
+        completed: true,
       },
       {
         title: "Đánh giá tình trạng kỹ thuật",
@@ -205,14 +511,14 @@ const sampleActivities = [
         dueDate: "10/01/2026",
         reportFields: [
           { name: "Số vũ khí tốt" },
-          { name: "Số vũ khí cần bảo dưỡng" }
+          { name: "Số vũ khí cần bảo dưỡng" },
         ],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-05T10:00:00Z"
+    createdAt: "2026-01-05T10:00:00Z",
   },
   {
     id: 4,
@@ -233,7 +539,7 @@ const sampleActivities = [
         dueDate: "12/01/2026",
         reportFields: [{ name: "Số tài liệu" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức buổi tập huấn",
@@ -242,7 +548,7 @@ const sampleActivities = [
         dueDate: "13/01/2026",
         reportFields: [{ name: "Số người tham dự" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Đánh giá kết quả",
@@ -251,11 +557,11 @@ const sampleActivities = [
         dueDate: "14/01/2026",
         reportFields: [{ name: "Báo cáo đánh giá" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-10T09:00:00Z"
+    createdAt: "2026-01-10T09:00:00Z",
   },
   {
     id: 5,
@@ -276,7 +582,7 @@ const sampleActivities = [
         dueDate: "16/01/2026",
         reportFields: [{ name: "Danh sách vật tư" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Kiểm tra kho lương thực",
@@ -285,7 +591,7 @@ const sampleActivities = [
         dueDate: "17/01/2026",
         reportFields: [{ name: "Số lượng tồn kho" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Lập báo cáo tổng hợp",
@@ -294,11 +600,11 @@ const sampleActivities = [
         dueDate: "18/01/2026",
         reportFields: [{ name: "Báo cáo" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-01-14T11:00:00Z"
+    createdAt: "2026-01-14T11:00:00Z",
   },
   {
     id: 6,
@@ -319,7 +625,7 @@ const sampleActivities = [
         dueDate: "19/01/2026",
         reportFields: [{ name: "Kế hoạch chi tiết" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Phân công lực lượng",
@@ -328,7 +634,7 @@ const sampleActivities = [
         dueDate: "19/01/2026",
         reportFields: [{ name: "Danh sách phân công" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức diễn tập",
@@ -337,7 +643,7 @@ const sampleActivities = [
         dueDate: "20/01/2026",
         reportFields: [{ name: "Thời gian thực hiện" }, { name: "Kết quả" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổng kết rút kinh nghiệm",
@@ -346,11 +652,11 @@ const sampleActivities = [
         dueDate: "21/01/2026",
         reportFields: [{ name: "Biên bản tổng kết" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-16T08:30:00Z"
+    createdAt: "2026-01-16T08:30:00Z",
   },
   {
     id: 7,
@@ -371,25 +677,23 @@ const sampleActivities = [
         dueDate: "16/01/2026",
         reportFields: [
           { name: "Số thiết bị được kiểm tra" },
-          { name: "Số thiết bị hỏng" }
+          { name: "Số thiết bị hỏng" },
         ],
         notes: "Ưu tiên thiết bị vô tuyến",
-        completed: true
+        completed: true,
       },
       {
         title: "Bảo dưỡng phương tiện giao thông",
         team: "Tổ 3",
         assignees: "Trương Giang Minh Tùng",
         dueDate: "18/01/2026",
-        reportFields: [
-          { name: "Số xe được bảo dưỡng" }
-        ],
+        reportFields: [{ name: "Số xe được bảo dưỡng" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-01-12T10:00:00Z"
+    createdAt: "2026-01-12T10:00:00Z",
   },
   {
     id: 8,
@@ -408,39 +712,31 @@ const sampleActivities = [
         team: "Tổ 3",
         assignees: "Lương Triệu Phát",
         dueDate: "21/01/2026",
-        reportFields: [
-          { name: "Số tài liệu photo" }
-        ],
+        reportFields: [{ name: "Số tài liệu photo" }],
         notes: "Liên hệ Trung tâm Y tế lấy tài liệu",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức lớp đào tạo",
         team: "Tổ 3",
         assignees: "Nguyễn Tấn Thuận",
         dueDate: "24/01/2026",
-        reportFields: [
-          { name: "Số học viên" },
-          { name: "Số giờ đào tạo" }
-        ],
+        reportFields: [{ name: "Số học viên" }, { name: "Số giờ đào tạo" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Kiểm tra kỹ năng thực hành",
         team: "Tổ 3",
         assignees: "Nguyễn Ngọc Tiến",
         dueDate: "25/01/2026",
-        reportFields: [
-          { name: "Số người đạt" },
-          { name: "Số người chưa đạt" }
-        ],
+        reportFields: [{ name: "Số người đạt" }, { name: "Số người chưa đạt" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-15T14:30:00Z"
+    createdAt: "2026-01-15T14:30:00Z",
   },
   {
     id: 9,
@@ -459,11 +755,9 @@ const sampleActivities = [
         team: "Tổ 3",
         assignees: "Phan Phong Phú",
         dueDate: "25/01/2026",
-        reportFields: [
-          { name: "Kịch bản diễn tập" }
-        ],
+        reportFields: [{ name: "Kịch bản diễn tập" }],
         notes: "Phối hợp với UBND Phường",
-        completed: true
+        completed: true,
       },
       {
         title: "Chuẩn bị trang thiết bị cứu hộ",
@@ -472,10 +766,10 @@ const sampleActivities = [
         dueDate: "26/01/2026",
         reportFields: [
           { name: "Số bộ dụng cụ TKNN" },
-          { name: "Số phao cứu sinh" }
+          { name: "Số phao cứu sinh" },
         ],
         notes: "Kiểm tra kỹ thiết bị trước khi diễn tập",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức diễn tập thực tế",
@@ -485,14 +779,14 @@ const sampleActivities = [
         reportFields: [
           { name: "Số người tham gia" },
           { name: "Thời gian hoàn thành (phút)" },
-          { name: "Đánh giá kết quả" }
+          { name: "Đánh giá kết quả" },
         ],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-01-18T09:00:00Z"
+    createdAt: "2026-01-18T09:00:00Z",
   },
   {
     id: 10,
@@ -513,7 +807,7 @@ const sampleActivities = [
         dueDate: "16/01/2026",
         reportFields: [{ name: "Kịch bản diễn tập" }],
         notes: "Phối hợp với UBND",
-        completed: true
+        completed: true,
       },
       {
         title: "Chuẩn bị thiết bị PCCC",
@@ -522,7 +816,7 @@ const sampleActivities = [
         dueDate: "17/01/2026",
         reportFields: [{ name: "Số bình chữa cháy" }, { name: "Số vòi nước" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Huấn luyện kỹ năng PCCC",
@@ -531,20 +825,23 @@ const sampleActivities = [
         dueDate: "18/01/2026",
         reportFields: [{ name: "Số người tham gia" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổ chức diễn tập thực tế",
         team: "Tổ 1",
         assignees: "Nguyễn Lý Minh Quang",
         dueDate: "19/01/2026",
-        reportFields: [{ name: "Thời gian hoàn thành (phút)" }, { name: "Đánh giá" }],
+        reportFields: [
+          { name: "Thời gian hoàn thành (phút)" },
+          { name: "Đánh giá" },
+        ],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-14T08:00:00Z"
+    createdAt: "2026-01-14T08:00:00Z",
   },
   {
     id: 11,
@@ -565,7 +862,7 @@ const sampleActivities = [
         dueDate: "28/01/2026",
         reportFields: [{ name: "Nội dung báo cáo" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổng hợp báo cáo Tổ 2",
@@ -574,7 +871,7 @@ const sampleActivities = [
         dueDate: "28/01/2026",
         reportFields: [{ name: "Nội dung báo cáo" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổng hợp báo cáo Tổ 3",
@@ -583,7 +880,7 @@ const sampleActivities = [
         dueDate: "28/01/2026",
         reportFields: [{ name: "Nội dung báo cáo" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Biên tập slide trình bày",
@@ -592,7 +889,7 @@ const sampleActivities = [
         dueDate: "29/01/2026",
         reportFields: [{ name: "Số slide" }],
         notes: "Sử dụng template chuẩn",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổ chức họp tổng kết",
@@ -601,11 +898,11 @@ const sampleActivities = [
         dueDate: "30/01/2026",
         reportFields: [{ name: "Số người tham dự" }, { name: "Biên bản họp" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-20T10:00:00Z"
+    createdAt: "2026-01-20T10:00:00Z",
   },
   {
     id: 12,
@@ -624,27 +921,36 @@ const sampleActivities = [
         team: "Tổ 1",
         assignees: "Ngô Trương Định, Nguyễn Lý Minh Quang",
         dueDate: "22/01/2026",
-        reportFields: [{ name: "Tình hình ANTT" }, { name: "Vấn đề phát hiện" }],
+        reportFields: [
+          { name: "Tình hình ANTT" },
+          { name: "Vấn đề phát hiện" },
+        ],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Kiểm tra khu vực 2",
         team: "Tổ 2",
         assignees: "Lý Triệu An, Phạm Gia Bảo",
         dueDate: "22/01/2026",
-        reportFields: [{ name: "Tình hình ANTT" }, { name: "Vấn đề phát hiện" }],
+        reportFields: [
+          { name: "Tình hình ANTT" },
+          { name: "Vấn đề phát hiện" },
+        ],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Kiểm tra khu vực 3",
         team: "Tổ 3",
         assignees: "Phan Phong Phú, Lương Triệu Phát",
         dueDate: "23/01/2026",
-        reportFields: [{ name: "Tình hình ANTT" }, { name: "Vấn đề phát hiện" }],
+        reportFields: [
+          { name: "Tình hình ANTT" },
+          { name: "Vấn đề phát hiện" },
+        ],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổng hợp báo cáo",
@@ -653,11 +959,11 @@ const sampleActivities = [
         dueDate: "24/01/2026",
         reportFields: [{ name: "Báo cáo tổng hợp" }],
         notes: "Gửi báo cáo cho UBND",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-21T14:00:00Z"
+    createdAt: "2026-01-21T14:00:00Z",
   },
   // ========== FEBRUARY 2026 ACTIVITIES ==========
   {
@@ -679,7 +985,7 @@ const sampleActivities = [
         dueDate: "03/02/2026",
         reportFields: [{ name: "Nội dung kế hoạch" }],
         notes: "Tham mưu BCH phê duyệt",
-        completed: false
+        completed: false,
       },
       {
         title: "Chuẩn bị trang thiết bị huấn luyện",
@@ -688,11 +994,11 @@ const sampleActivities = [
         dueDate: "04/02/2026",
         reportFields: [{ name: "Danh sách thiết bị" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-01T08:00:00Z"
+    createdAt: "2026-02-01T08:00:00Z",
   },
   {
     id: 14,
@@ -711,9 +1017,12 @@ const sampleActivities = [
         team: "Tổ 3",
         assignees: "Phan Phong Phú",
         dueDate: "05/02/2026",
-        reportFields: [{ name: "Số lượng tốt" }, { name: "Số lượng cần sửa chữa" }],
+        reportFields: [
+          { name: "Số lượng tốt" },
+          { name: "Số lượng cần sửa chữa" },
+        ],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Báo cáo tổng hợp tình trạng",
@@ -722,11 +1031,11 @@ const sampleActivities = [
         dueDate: "08/02/2026",
         reportFields: [{ name: "Báo cáo" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-03T09:00:00Z"
+    createdAt: "2026-02-03T09:00:00Z",
   },
   {
     id: 15,
@@ -747,7 +1056,7 @@ const sampleActivities = [
         dueDate: "10/02/2026",
         reportFields: [{ name: "Số tài liệu" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức lớp tập huấn",
@@ -756,11 +1065,11 @@ const sampleActivities = [
         dueDate: "11/02/2026",
         reportFields: [{ name: "Số người tham dự" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-05T10:00:00Z"
+    createdAt: "2026-02-05T10:00:00Z",
   },
   {
     id: 16,
@@ -781,7 +1090,7 @@ const sampleActivities = [
         dueDate: "12/02/2026",
         reportFields: [{ name: "Kịch bản" }],
         notes: "Phối hợp UBND",
-        completed: false
+        completed: false,
       },
       {
         title: "Chuẩn bị phương tiện cứu hộ",
@@ -790,7 +1099,7 @@ const sampleActivities = [
         dueDate: "13/02/2026",
         reportFields: [{ name: "Số xuồng" }, { name: "Số phao" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức diễn tập thực tế",
@@ -799,11 +1108,11 @@ const sampleActivities = [
         dueDate: "14/02/2026",
         reportFields: [{ name: "Thời gian hoàn thành" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-08T08:30:00Z"
+    createdAt: "2026-02-08T08:30:00Z",
   },
   {
     id: 17,
@@ -824,11 +1133,11 @@ const sampleActivities = [
         dueDate: "02/02/2026",
         reportFields: [{ name: "Nội dung" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-30T14:00:00Z"
+    createdAt: "2026-01-30T14:00:00Z",
   },
   {
     id: 18,
@@ -849,7 +1158,7 @@ const sampleActivities = [
         dueDate: "16/02/2026",
         reportFields: [{ name: "Diện tích vệ sinh (m2)" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Kiểm kê và sắp xếp",
@@ -858,11 +1167,11 @@ const sampleActivities = [
         dueDate: "17/02/2026",
         reportFields: [{ name: "Số vật tư kiểm kê" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-12T09:00:00Z"
+    createdAt: "2026-02-12T09:00:00Z",
   },
   {
     id: 19,
@@ -883,7 +1192,7 @@ const sampleActivities = [
         dueDate: "15/02/2026",
         reportFields: [{ name: "Số giờ đăng ký" }],
         notes: "Liên hệ trước 3 ngày",
-        completed: false
+        completed: false,
       },
       {
         title: "Chuẩn bị đạn và súng",
@@ -892,20 +1201,23 @@ const sampleActivities = [
         dueDate: "17/02/2026",
         reportFields: [{ name: "Số viên đạn" }, { name: "Số khẩu súng" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổ chức huấn luyện",
         team: "Tổ 2",
         assignees: "Phạm Gia Bảo",
         dueDate: "19/02/2026",
-        reportFields: [{ name: "Số người tham gia" }, { name: "Điểm trung bình" }],
+        reportFields: [
+          { name: "Số người tham gia" },
+          { name: "Điểm trung bình" },
+        ],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-10T10:00:00Z"
+    createdAt: "2026-02-10T10:00:00Z",
   },
   {
     id: 20,
@@ -926,7 +1238,7 @@ const sampleActivities = [
         dueDate: "08/02/2026",
         reportFields: [{ name: "Lịch tuần tra" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tuần tra khu vực chợ",
@@ -935,11 +1247,11 @@ const sampleActivities = [
         dueDate: "09/02/2026",
         reportFields: [{ name: "Tình hình" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-06T08:00:00Z"
+    createdAt: "2026-02-06T08:00:00Z",
   },
   {
     id: 21,
@@ -960,7 +1272,7 @@ const sampleActivities = [
         dueDate: "20/02/2026",
         reportFields: [{ name: "Kịch bản" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Trang trí hội trường",
@@ -969,11 +1281,11 @@ const sampleActivities = [
         dueDate: "21/02/2026",
         reportFields: [{ name: "Hoàn thành %" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-15T09:00:00Z"
+    createdAt: "2026-02-15T09:00:00Z",
   },
   {
     id: 22,
@@ -994,7 +1306,7 @@ const sampleActivities = [
         dueDate: "23/02/2026",
         reportFields: [{ name: "Số người" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức khám sức khỏe",
@@ -1003,11 +1315,11 @@ const sampleActivities = [
         dueDate: "25/02/2026",
         reportFields: [{ name: "Số người đã khám" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-18T10:00:00Z"
+    createdAt: "2026-02-18T10:00:00Z",
   },
   {
     id: 23,
@@ -1028,7 +1340,7 @@ const sampleActivities = [
         dueDate: "26/02/2026",
         reportFields: [{ name: "Số báo cáo" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Biên tập báo cáo tổng hợp",
@@ -1037,7 +1349,7 @@ const sampleActivities = [
         dueDate: "27/02/2026",
         reportFields: [{ name: "Báo cáo" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổ chức họp tổng kết",
@@ -1046,11 +1358,11 @@ const sampleActivities = [
         dueDate: "28/02/2026",
         reportFields: [{ name: "Số người tham dự" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-20T14:00:00Z"
+    createdAt: "2026-02-20T14:00:00Z",
   },
   {
     id: 24,
@@ -1071,7 +1383,7 @@ const sampleActivities = [
         dueDate: "05/02/2026",
         reportFields: [{ name: "Số đơn vị" }],
         notes: "Công an, PCCC, Y tế",
-        completed: false
+        completed: false,
       },
       {
         title: "Tổ chức diễn tập",
@@ -1080,11 +1392,11 @@ const sampleActivities = [
         dueDate: "07/02/2026",
         reportFields: [{ name: "Thời gian" }, { name: "Kết quả" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-02T09:00:00Z"
+    createdAt: "2026-02-02T09:00:00Z",
   },
   {
     id: 25,
@@ -1105,7 +1417,7 @@ const sampleActivities = [
         dueDate: "09/02/2026",
         reportFields: [{ name: "Số tài liệu" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Hướng dẫn thực hành",
@@ -1114,11 +1426,11 @@ const sampleActivities = [
         dueDate: "10/02/2026",
         reportFields: [{ name: "Số người được hướng dẫn" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-05T11:00:00Z"
+    createdAt: "2026-02-05T11:00:00Z",
   },
   {
     id: 26,
@@ -1139,7 +1451,7 @@ const sampleActivities = [
         dueDate: "13/02/2026",
         reportFields: [{ name: "Số tờ rơi" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Phát tờ rơi tại khu dân cư",
@@ -1148,11 +1460,11 @@ const sampleActivities = [
         dueDate: "15/02/2026",
         reportFields: [{ name: "Số hộ tiếp cận" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-10T08:00:00Z"
+    createdAt: "2026-02-10T08:00:00Z",
   },
   {
     id: 27,
@@ -1173,7 +1485,7 @@ const sampleActivities = [
         dueDate: "19/02/2026",
         reportFields: [{ name: "Số bình tốt" }, { name: "Số bình cần thay" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Lập biên bản kiểm tra",
@@ -1182,11 +1494,11 @@ const sampleActivities = [
         dueDate: "21/02/2026",
         reportFields: [{ name: "Số biên bản" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-16T10:00:00Z"
+    createdAt: "2026-02-16T10:00:00Z",
   },
   {
     id: 28,
@@ -1207,7 +1519,7 @@ const sampleActivities = [
         dueDate: "03/02/2026",
         reportFields: [{ name: "Báo cáo" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Lập kế hoạch năm mới",
@@ -1216,11 +1528,11 @@ const sampleActivities = [
         dueDate: "03/02/2026",
         reportFields: [{ name: "Kế hoạch" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-01-28T09:00:00Z"
+    createdAt: "2026-01-28T09:00:00Z",
   },
   {
     id: 29,
@@ -1241,7 +1553,7 @@ const sampleActivities = [
         dueDate: "19/02/2026",
         reportFields: [{ name: "Số đèn" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Huấn luyện thực hành",
@@ -1250,11 +1562,11 @@ const sampleActivities = [
         dueDate: "21/02/2026",
         reportFields: [{ name: "Số người tham gia" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-14T10:00:00Z"
+    createdAt: "2026-02-14T10:00:00Z",
   },
   {
     id: 30,
@@ -1275,7 +1587,7 @@ const sampleActivities = [
         dueDate: "20/02/2026",
         reportFields: [{ name: "Số người mời" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Chuẩn bị quà tặng",
@@ -1284,11 +1596,11 @@ const sampleActivities = [
         dueDate: "22/02/2026",
         reportFields: [{ name: "Số phần quà" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-17T09:00:00Z"
+    createdAt: "2026-02-17T09:00:00Z",
   },
   {
     id: 31,
@@ -1309,7 +1621,7 @@ const sampleActivities = [
         dueDate: "24/02/2026",
         reportFields: [{ name: "Số người" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức kiểm tra chạy 100m",
@@ -1318,7 +1630,7 @@ const sampleActivities = [
         dueDate: "25/02/2026",
         reportFields: [{ name: "Số người đạt" }],
         notes: "",
-        completed: true
+        completed: true,
       },
       {
         title: "Tổ chức kiểm tra hít đất",
@@ -1327,11 +1639,11 @@ const sampleActivities = [
         dueDate: "26/02/2026",
         reportFields: [{ name: "Số người đạt" }],
         notes: "",
-        completed: false
-      }
+        completed: false,
+      },
     ],
     createdBy: "admin",
-    createdAt: "2026-02-20T08:00:00Z"
+    createdAt: "2026-02-20T08:00:00Z",
   },
   {
     id: 32,
@@ -1352,7 +1664,7 @@ const sampleActivities = [
         dueDate: "14/02/2026",
         reportFields: [{ name: "Phương án" }],
         notes: "",
-        completed: false
+        completed: false,
       },
       {
         title: "Phân công lực lượng bảo vệ",
@@ -1361,31 +1673,31 @@ const sampleActivities = [
         dueDate: "14/02/2026",
         reportFields: [{ name: "Số người" }],
         notes: "",
-        completed: true
-      }
+        completed: true,
+      },
     ],
     createdBy: "dqtt",
-    createdAt: "2026-02-12T11:00:00Z"
-  }
+    createdAt: "2026-02-12T11:00:00Z",
+  },
 ];
 
 // Save to localStorage
-localStorage.setItem('dqp10_users', JSON.stringify(dqp10_users));
-localStorage.setItem('dqp10_activities', JSON.stringify(sampleActivities));
+localStorage.setItem("dqp10_users", JSON.stringify(dqp10_users));
+localStorage.setItem("dqp10_activities", JSON.stringify(sampleActivities));
 
-console.log('✅ Đã lưu 39 users và 32 hoạt động mẫu vào localStorage!');
-console.log('📅 Tháng 01/2026: 12 hoạt động');
-console.log('📅 Tháng 02/2026: 20 hoạt động');
-console.log('📊 User Distribution:');
-console.log('   Tổ 1: 4 members');
-console.log('   Tổ 2: 5 members');
-console.log('   Tổ 3: 5 members');
-console.log('   Tổ 4: 4 members');
-console.log('   Tổ 5: 4 members');
-console.log('   Tổ 6: 5 members');
-console.log('   Tổ 7: 4 members');
-console.log('   Tổ 8: 4 members');
-console.log('   Tổ 9: 4 members');
-console.log('   Total: 39 members');
-console.log('📋 Keys: dqp10_users, dqp10_activities');
-console.log('📊 Progress tracking enabled - each task has completed status');
+console.log("✅ Đã lưu 39 users và 32 hoạt động mẫu vào localStorage!");
+console.log("📅 Tháng 01/2026: 12 hoạt động");
+console.log("📅 Tháng 02/2026: 20 hoạt động");
+console.log("📊 User Distribution:");
+console.log("   Tổ 1: 4 members");
+console.log("   Tổ 2: 5 members");
+console.log("   Tổ 3: 5 members");
+console.log("   Tổ 4: 4 members");
+console.log("   Tổ 5: 4 members");
+console.log("   Tổ 6: 5 members");
+console.log("   Tổ 7: 4 members");
+console.log("   Tổ 8: 4 members");
+console.log("   Tổ 9: 4 members");
+console.log("   Total: 39 members");
+console.log("📋 Keys: dqp10_users, dqp10_activities");
+console.log("📊 Progress tracking enabled - each task has completed status");

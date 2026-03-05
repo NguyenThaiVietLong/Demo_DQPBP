@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bản đồ Dân quân - Phường Bình Phú</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Map Data -->
+    <script src="map-data.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: { extend: { colors: { olive: "#556B2F" } } },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Google Maps InfoWindow override */
+      .gm-style-iw {
+        padding: 0 !important;
+      }
+      .gm-style-iw-d {
+        overflow: hidden !important;
+        padding: 0 !important;
+      }
+      .gm-style-iw-c {
+        padding: 0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .militia-popup .popup-header {
+        color: white;
+        padding: 12px 16px;
+      }
+      .militia-popup .popup-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+        line-height: 1.3;
+        font-family: "Inter", sans-serif;
+      }
+      .militia-popup .popup-badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .militia-popup .popup-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.25);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .militia-popup .popup-body {
+        padding: 12px 16px;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Popup photo */
+      .popup-photo-wrap {
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+      }
+      .popup-photo-wrap img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s;
+      }
+      .popup-photo-wrap:hover img {
+        transform: scale(1.05);
+      }
+      .popup-photo-wrap .photo-expand-hint {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border-radius: 6px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        pointer-events: none;
+      }
+
+      /* ===== Lightbox / Gallery Modal ===== */
+      .photo-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(0, 0, 0, 0.92);
+        backdrop-filter: blur(8px);
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .photo-lightbox.active {
+        display: flex;
+      }
+      .photo-lightbox .lb-close {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+        z-index: 10;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: background 0.2s;
+      }
+      .photo-lightbox .lb-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .photo-lightbox .lb-header {
+        position: absolute;
+        top: 16px;
+        left: 20px;
+        color: white;
+        z-index: 10;
+      }
+      .photo-lightbox .lb-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .photo-lightbox .lb-header p {
+        font-size: 13px;
+        opacity: 0.7;
+        margin: 4px 0 0;
+      }
+      .photo-lightbox .lb-main-img {
+        max-width: 90vw;
+        max-height: 70vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        object-fit: contain;
+        transition: opacity 0.3s;
+      }
+      .photo-lightbox .lb-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 36px;
+        cursor: pointer;
+        z-index: 10;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: background 0.2s;
+      }
+      .photo-lightbox .lb-nav:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .photo-lightbox .lb-prev {
+        left: 20px;
+      }
+      .photo-lightbox .lb-next {
+        right: 20px;
+      }
+      .photo-lightbox .lb-counter {
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 16px;
+        opacity: 0.8;
+      }
+      .photo-lightbox .lb-thumbnails {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        overflow-x: auto;
+        padding: 0 20px;
+      }
+      .photo-lightbox .lb-thumb {
+        width: 80px;
+        height: 56px;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.2s;
+        opacity: 0.6;
+        flex-shrink: 0;
+      }
+      .photo-lightbox .lb-thumb.active {
+        border-color: white;
+        opacity: 1;
+      }
+      .photo-lightbox .lb-thumb:hover {
+        opacity: 1;
+      }
+      .photo-lightbox .lb-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 11px;
+        text-align: center;
+        margin-top: 8px;
+      }
+      .militia-popup .popup-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 4px 0;
+        font-size: 13px;
+        color: #374151;
+      }
+      .militia-popup .popup-row .row-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .filter-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .filter-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .filter-scroll::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+
+      .cat-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 2px solid white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Map type switcher */
+      .map-type-btn {
+        transition: all 0.2s;
+      }
+      .map-type-btn.active {
+        background: #556b2f;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans antialiased">
+    <div class="flex h-screen overflow-hidden" x-data="mapApp()">
+      <!-- Sidebar (kept identical to original) -->
+      <aside
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col p-4 hidden md:flex h-full"
+      >
+        <div class="flex gap-3 px-2 py-2 mb-4">
+          <img src="logo-dqtv.png" alt="Logo" class="size-10 object-contain" />
+          <div class="flex flex-col justify-center">
+            <h1 class="text-gray-900 text-base font-bold">
+              BAN CHQS PHƯỜNG BÌNH PHÚ
+            </h1>
+            <p class="text-gray-500 text-xs">Hệ thống quản lý</p>
+          </div>
+        </div>
+
+        <!-- User Profile -->
+        <div
+          class="mb-4 p-3 bg-gradient-to-r from-olive/10 to-olive/5 rounded-lg border border-olive/20"
+        >
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <div
+                class="size-10 rounded-full bg-olive/20 flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-olive text-2xl"
+                  >account_circle</span
+                >
+              </div>
+              <span
+                class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white rounded-full"
+              ></span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p
+                class="text-sm font-bold text-gray-900 truncate"
+                x-text="currentUser.fullName || 'Guest'"
+              ></p>
+              <p class="text-xs text-gray-600">
+                <span
+                  class="px-2 py-0.5 rounded-full text-xs font-medium"
+                  :class="{'bg-blue-100 text-blue-700': currentUser.role === 'dqtt', 'bg-orange-100 text-orange-700': currentUser.role === 'admin'}"
+                  x-text="currentUser.role === 'admin' ? 'Admin' : (currentUser.team || 'DQTT')"
+                ></span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="flex flex-col gap-2">
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            href="index.html"
+          >
+            <span class="material-symbols-outlined text-gray-600">home</span>
+            <p class="text-sm font-medium text-gray-600">Trang chủ</p>
+          </a>
+          <div x-show="currentUser.role === 'admin'">
+            <div class="flex items-center gap-3 px-3 py-2 text-gray-700">
+              <span class="material-symbols-outlined text-gray-600"
+                >assessment</span
+              >
+              <p class="text-sm font-bold text-gray-700">Dashboard</p>
+            </div>
+            <div class="ml-6 space-y-1 border-l-2 border-gray-200 pl-3">
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="dashboard-tong-hop.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Tổng hợp</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="dashboard-facebook.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Facebook</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="dashboard-kho.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Kho</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="dashboard-luc-luong.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Lực lượng</p></a
+              >
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 px-3 py-2 text-gray-700">
+              <span class="material-symbols-outlined text-gray-600">event</span>
+              <p class="text-sm font-bold text-gray-700">Hoạt động</p>
+            </div>
+            <div class="ml-6 space-y-1 border-l-2 border-gray-200 pl-3">
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="activity-list.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Danh sách</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="activity-calendar.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Lịch</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="module-lich-truc.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Lịch trực</p></a
+              >
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 px-3 py-2 text-gray-700">
+              <span class="material-symbols-outlined text-gray-600">group</span>
+              <p class="text-sm font-bold text-gray-700">Nhân sự</p>
+            </div>
+            <div class="ml-6 space-y-1 border-l-2 border-gray-200 pl-3">
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="personnel-tuoi17.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Tuổi 17</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="personnel-nguon.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Nguồn</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="personnel-qndb.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">Quân nhân dự bị</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="personnel-dqtt.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">DQTT</p></a
+              >
+              <a
+                class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-600"
+                href="personnel-dqcd.html"
+                ><span class="size-1.5 rounded-full bg-gray-400"></span>
+                <p class="text-sm font-medium">DQCĐ</p></a
+              >
+            </div>
+          </div>
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            href="module3-inventory-complete.html"
+          >
+            <span class="material-symbols-outlined text-gray-600"
+              >inventory_2</span
+            >
+            <p class="text-sm font-medium text-gray-600">Kho</p>
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            href="module4-documents-complete.html"
+          >
+            <span class="material-symbols-outlined text-gray-600">folder</span>
+            <p class="text-sm font-medium text-gray-600">Tài liệu</p>
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg bg-olive/10 text-olive transition-colors"
+            href="map-danquan.html"
+          >
+            <span
+              class="material-symbols-outlined"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >map</span
+            >
+            <p class="text-sm font-bold text-olive">Bản đồ</p>
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            href="CMS/index.html"
+          >
+            <span class="material-symbols-outlined text-gray-600"
+              >language</span
+            >
+            <p class="text-sm font-medium text-gray-600">Trang thông tin</p>
+          </a>
+        </nav>
+
+        <div class="mt-auto pt-4 border-t border-gray-200 space-y-2">
+          <a
+            @click.prevent="logout()"
+            href="#"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold bg-olive text-white hover:bg-olive/90 transition-colors justify-center cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-xl">logout</span>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Bản đồ Dân quân</h1>
+              <p class="text-sm text-gray-500 mt-1">
+                Vị trí nhà ở của lực lượng dân quân Phường Bình Phú
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div
+                class="bg-olive/10 text-olive px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5"
+              >
+                <span class="material-symbols-outlined text-base">group</span>
+                <span
+                  x-text="visibleCount + '/' + totalCount + ' người'"
+                ></span>
+              </div>
+              <div
+                class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5"
+              >
+                <span class="material-symbols-outlined text-base"
+                  >category</span
+                >
+                <span x-text="activeCatCount + ' danh sách'"></span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+          <div class="flex-1 relative">
+            <div id="map" class="w-full h-full"></div>
+
+            <!-- Map Type Switcher -->
+            <div
+              class="absolute top-4 left-4 z-10 bg-white rounded-lg shadow-lg border border-gray-200 flex overflow-hidden"
+            >
+              <button
+                onclick="setMapType('roadmap')"
+                id="btn-roadmap"
+                class="map-type-btn active px-3 py-1.5 text-xs font-bold border-r border-gray-200"
+              >
+                Bản đồ
+              </button>
+              <button
+                onclick="setMapType('satellite')"
+                id="btn-satellite"
+                class="map-type-btn px-3 py-1.5 text-xs font-bold border-r border-gray-200"
+              >
+                Vệ tinh
+              </button>
+              <button
+                onclick="setMapType('hybrid')"
+                id="btn-hybrid"
+                class="map-type-btn px-3 py-1.5 text-xs font-bold"
+              >
+                Kết hợp
+              </button>
+            </div>
+
+            <!-- Floating Category Filter Panel -->
+            <div
+              class="absolute top-4 right-4 z-10 bg-white rounded-xl shadow-xl border border-gray-200 w-64 overflow-hidden"
+            >
+              <div
+                class="px-4 py-3 bg-gradient-to-r from-olive to-olive/80 text-white"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-lg"
+                    >filter_list</span
+                  >
+                  <h3 class="text-sm font-bold">Lọc theo danh sách</h3>
+                </div>
+              </div>
+
+              <div class="px-4 py-2.5 border-b border-gray-100">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    :checked="allCatsSelected"
+                    @change="toggleAllCats($event.target.checked)"
+                    class="w-4 h-4 rounded border-gray-300 text-olive focus:ring-olive"
+                  />
+                  <span class="text-sm font-bold text-gray-700"
+                    >Chọn tất cả</span
+                  >
+                </label>
+              </div>
+
+              <div
+                class="px-3 py-2 max-h-[400px] overflow-y-auto filter-scroll space-y-1"
+              >
+                <template x-for="(cat, index) in categories" :key="cat.key">
+                  <label
+                    class="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      :checked="cat.visible"
+                      @change="toggleCategory(index)"
+                      class="w-4 h-4 rounded border-gray-300 text-olive focus:ring-olive"
+                    />
+                    <span
+                      class="cat-dot"
+                      :style="'background-color:' + cat.color"
+                    ></span>
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-semibold text-gray-700"
+                        x-text="cat.label"
+                      ></p>
+                      <p
+                        class="text-[11px] text-gray-400"
+                        x-text="cat.description"
+                      ></p>
+                    </div>
+                    <span
+                      class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded-full"
+                      x-text="cat.count"
+                    ></span>
+                  </label>
+                </template>
+              </div>
+            </div>
+
+            <!-- Map Legend -->
+            <div
+              class="absolute bottom-6 left-4 z-10 bg-white/95 backdrop-blur rounded-lg shadow-lg border border-gray-200 px-4 py-3"
+            >
+              <div
+                class="flex items-center gap-4 text-xs text-gray-600 flex-wrap"
+              >
+                <template x-for="cat in categories" :key="cat.key">
+                  <div class="flex items-center gap-1.5" x-show="cat.visible">
+                    <span
+                      class="cat-dot"
+                      style="width: 10px; height: 10px"
+                      :style="'background-color:' + cat.color"
+                    ></span>
+                    <span x-text="cat.label"></span>
+                  </div>
+                </template>
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-olive text-sm"
+                    >flag</span
+                  >
+                  <span>Trụ sở UBND</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // ===== Google Maps globals =====
+      let gmap,
+        gInfoWindow,
+        gMarkers = [];
+
+      // ===== Map Type Switcher =====
+      function setMapType(type) {
+        if (!gmap) return;
+        gmap.setMapTypeId(type);
+        document
+          .querySelectorAll(".map-type-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("btn-" + type).classList.add("active");
+      }
+
+      // ===== Create SVG marker icon for Google Maps =====
+      function createGMarkerIcon(color) {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="42">
+          <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="${color}" stroke="white" stroke-width="1.5"/>
+          <circle cx="12" cy="11" r="5" fill="white" opacity="0.9"/><circle cx="12" cy="11" r="3" fill="${color}"/>
+        </svg>`;
+        return {
+          url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+          scaledSize: new google.maps.Size(28, 42),
+          anchor: new google.maps.Point(14, 42),
+        };
+      }
+
+      // ===== Alpine.js App =====
+      function mapApp() {
+        return {
+          currentUser: { fullName: "Guest", role: null, team: null },
+          categories: [],
+          totalCount: 0,
+          visibleCount: 0,
+
+          get allCatsSelected() {
+            return this.categories.every((c) => c.visible);
+          },
+          get activeCatCount() {
+            return this.categories.filter((c) => c.visible).length;
+          },
+
+          init() {
+            const session = localStorage.getItem("dqp10_session");
+            if (!session) {
+              window.location.href = "login.html";
+              return;
+            }
+            this.currentUser = JSON.parse(session);
+            this.initCategories();
+            // Google Maps will call initMap via callback
+          },
+
+          initCategories() {
+            const catMap = {};
+            mapMembers.forEach((m) => {
+              const cfg = CATEGORY_CONFIG[m.category];
+              if (!cfg) return;
+              if (!catMap[m.category]) {
+                catMap[m.category] = {
+                  key: m.category,
+                  color: cfg.color,
+                  icon: cfg.icon,
+                  label: cfg.label,
+                  description: cfg.description,
+                  visible: true,
+                  count: 0,
+                };
+              }
+              catMap[m.category].count++;
+            });
+            const order = ["Tuổi 17", "Nguon", "QNDB", "DQTT", "DQCD"];
+            this.categories = order
+              .filter((k) => catMap[k])
+              .map((k) => catMap[k]);
+            this.totalCount = mapMembers.length;
+            this.visibleCount = mapMembers.length;
+          },
+
+          toggleCategory(index) {
+            this.categories[index].visible = !this.categories[index].visible;
+            this.updateVisibility();
+          },
+          toggleAllCats(checked) {
+            this.categories.forEach((c) => (c.visible = checked));
+            this.updateVisibility();
+          },
+          updateVisibility() {
+            const visible = new Set(
+              this.categories.filter((c) => c.visible).map((c) => c.key),
+            );
+            let count = 0;
+            gMarkers.forEach((m) => {
+              const show = visible.has(m._category);
+              m.setVisible(show);
+              if (show) count++;
+            });
+            this.visibleCount = count;
+          },
+          logout() {
+            localStorage.removeItem("dqp10_session");
+            window.location.href = "login.html";
+          },
+        };
+      }
+
+      // ===== Google Maps init callback =====
+      function initMap() {
+        gmap = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 10.74, lng: 106.63 },
+          zoom: 17,
+          mapTypeId: "roadmap",
+          mapTypeControl: false, // We use our own switcher
+          streetViewControl: true,
+          fullscreenControl: true,
+          zoomControl: true,
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
+            },
+          ],
+        });
+
+        gInfoWindow = new google.maps.InfoWindow();
+
+        // HQ Marker
+        const hqMarker = new google.maps.Marker({
+          position: { lat: 10.74, lng: 106.63 },
+          map: gmap,
+          title: "Trụ sở UBND Phường Bình Phú",
+          icon: {
+            url:
+              "data:image/svg+xml;charset=UTF-8," +
+              encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="36" height="44"><path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="#556B2F" stroke="#fff" stroke-width="2"/><text x="16" y="20" text-anchor="middle" fill="white" font-size="16">⭐</text></svg>`,
+              ),
+            scaledSize: new google.maps.Size(36, 44),
+            anchor: new google.maps.Point(18, 44),
+          },
+          zIndex: 1000,
+        });
+        hqMarker.addListener("click", () => {
+          gInfoWindow.setContent(`
+            <div class="militia-popup" style="min-width:260px">
+              <div class="popup-header" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);">
+                <h3>⭐ Trụ sở UBND Phường Bình Phú</h3>
+                <div class="popup-badges"><span class="popup-badge">Ban CHQS</span></div>
+              </div>
+              <div class="popup-body">
+                <div class="popup-row">
+                  <span class="material-symbols-outlined row-icon" style="color:#8B4513">location_on</span>
+                  <span>Phường Bình Phú, TP. Hồ Chí Minh</span>
+                </div>
+              </div>
+            </div>`);
+          gInfoWindow.open(gmap, hqMarker);
+        });
+
+        // Add member markers
+        mapMembers.forEach((member, idx) => {
+          if (!member.lat || !member.lng) return;
+          const cfg = CATEGORY_CONFIG[member.category];
+          if (!cfg) return;
+
+          const marker = new google.maps.Marker({
+            position: { lat: member.lat, lng: member.lng },
+            map: gmap,
+            title: member.name,
+            icon: createGMarkerIcon(cfg.color),
+            optimized: true,
+          });
+
+          marker._category = member.category;
+
+          const dobLine = member.dob
+            ? `<div class="popup-row"><span class="material-symbols-outlined row-icon" style="color:${cfg.color}">cake</span><span>${member.dob}</span></div>`
+            : "";
+          const noteLine = member.note
+            ? `<div class="popup-row"><span class="material-symbols-outlined row-icon" style="color:${cfg.color}">info</span><span>${member.note}</span></div>`
+            : "";
+          const kpLine = member.kp
+            ? `<span class="popup-badge">KP ${member.kp}</span>`
+            : "";
+
+          const API_KEY = "AIzaSyAfZ7_pufg1C1Da4YSwsBcgDPtgJvxuVWc";
+          const svBase = `https://maps.googleapis.com/maps/api/streetview?location=${member.lat},${member.lng}&fov=90&pitch=5&key=${API_KEY}`;
+          const thumbUrl = `${svBase}&size=600x280&heading=0`;
+          const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${member.lat},${member.lng}&zoom=18&size=600x280&maptype=satellite&markers=color:red|${member.lat},${member.lng}&key=${API_KEY}`;
+          const galleryId = `gallery_${idx}`;
+
+          // Build gallery data for lightbox (4 angles + satellite)
+          const galleryAngles = [
+            { heading: 0, label: "Mặt trước" },
+            { heading: 90, label: "Bên phải" },
+            { heading: 180, label: "Mặt sau" },
+            { heading: 270, label: "Bên trái" },
+          ];
+
+          const content = `
+            <div class="militia-popup" style="min-width:300px;max-width:340px">
+              <div class="popup-photo-wrap" onclick="openGallery(${member.lat}, ${member.lng}, '${member.name.replace(/'/g, "\\'")}', '${member.address.replace(/'/g, "\\'")}')">
+                <img src="${thumbUrl}" style="height:160px" alt="" onerror="this.src='${staticMapUrl}'"/>
+                <div class="photo-expand-hint">
+                  <span class="material-symbols-outlined" style="font-size:14px">photo_library</span>
+                  Xem ảnh
+                </div>
+              </div>
+              <div class="popup-header" style="background: linear-gradient(135deg, ${cfg.color} 0%, ${cfg.color}cc 100%);">
+                <h3>👤 ${member.name}</h3>
+                <div class="popup-badges">
+                  <span class="popup-badge">
+                    <span class="material-symbols-outlined" style="font-size:12px">${cfg.icon}</span>
+                    ${cfg.label}
+                  </span>
+                  ${kpLine}
+                </div>
+              </div>
+              <div class="popup-body">
+                <div class="popup-row"><span class="material-symbols-outlined row-icon" style="color:${cfg.color}">home</span><span>${member.address}</span></div>
+                ${dobLine}
+                ${noteLine}
+              </div>
+            </div>`;
+
+          marker.addListener("click", () => {
+            gInfoWindow.setContent(content);
+            gInfoWindow.open(gmap, marker);
+          });
+
+          gMarkers.push(marker);
+        });
+      }
+    </script>
+
+    <!-- ===== Photo Lightbox / Gallery Modal ===== -->
+    <div
+      class="photo-lightbox"
+      id="photoLightbox"
+      onclick="if (event.target === this) closeGallery();"
+    >
+      <div class="lb-header">
+        <h3 id="lbTitle"></h3>
+        <p id="lbAddress"></p>
+      </div>
+      <div class="lb-close" onclick="closeGallery()">
+        <span class="material-symbols-outlined">close</span>
+      </div>
+      <div class="lb-nav lb-prev" onclick="galleryNav(-1)">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </div>
+      <div class="lb-nav lb-next" onclick="galleryNav(1)">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </div>
+      <img class="lb-main-img" id="lbMainImg" src="" alt="" />
+      <div class="lb-counter" id="lbCounter"></div>
+      <div class="lb-label" id="lbLabel"></div>
+      <div class="lb-thumbnails" id="lbThumbs"></div>
+    </div>
+
+    <script>
+      // ===== Gallery / Lightbox Logic =====
+      const GALLERY_API_KEY = "AIzaSyAfZ7_pufg1C1Da4YSwsBcgDPtgJvxuVWc";
+      let galleryPhotos = [];
+      let galleryIndex = 0;
+
+      function openGallery(lat, lng, name, address) {
+        const angles = [
+          { heading: 0, label: "Mặt trước (0°)" },
+          { heading: 90, label: "Bên phải (90°)" },
+          { heading: 180, label: "Mặt sau (180°)" },
+          { heading: 270, label: "Bên trái (270°)" },
+        ];
+
+        galleryPhotos = angles.map((a) => ({
+          url: `https://maps.googleapis.com/maps/api/streetview?size=1200x600&location=${lat},${lng}&fov=100&pitch=5&heading=${a.heading}&key=${GALLERY_API_KEY}`,
+          thumb: `https://maps.googleapis.com/maps/api/streetview?size=160x112&location=${lat},${lng}&fov=100&pitch=5&heading=${a.heading}&key=${GALLERY_API_KEY}`,
+          label: a.label,
+        }));
+
+        // Add satellite view as last photo
+        galleryPhotos.push({
+          url: `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=19&size=1200x600&maptype=satellite&markers=color:red|${lat},${lng}&key=${GALLERY_API_KEY}`,
+          thumb: `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=18&size=160x112&maptype=satellite&markers=color:red|${lat},${lng}&key=${GALLERY_API_KEY}`,
+          label: "Ảnh vệ tinh",
+        });
+
+        galleryIndex = 0;
+
+        document.getElementById("lbTitle").textContent = name;
+        document.getElementById("lbAddress").textContent = address;
+
+        // Build thumbnails
+        const thumbsEl = document.getElementById("lbThumbs");
+        thumbsEl.innerHTML = galleryPhotos
+          .map(
+            (p, i) =>
+              `<img class="lb-thumb ${i === 0 ? "active" : ""}" src="${p.thumb}" alt="${p.label}" onclick="galleryGoTo(${i})" />`,
+          )
+          .join("");
+
+        updateGalleryView();
+        document.getElementById("photoLightbox").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeGallery() {
+        document.getElementById("photoLightbox").classList.remove("active");
+        document.body.style.overflow = "";
+      }
+
+      function galleryNav(dir) {
+        galleryIndex =
+          (galleryIndex + dir + galleryPhotos.length) % galleryPhotos.length;
+        updateGalleryView();
+      }
+
+      function galleryGoTo(idx) {
+        galleryIndex = idx;
+        updateGalleryView();
+      }
+
+      function updateGalleryView() {
+        const photo = galleryPhotos[galleryIndex];
+        document.getElementById("lbMainImg").src = photo.url;
+        document.getElementById("lbCounter").textContent =
+          `${galleryIndex + 1} / ${galleryPhotos.length}`;
+        document.getElementById("lbLabel").textContent = photo.label;
+
+        document.querySelectorAll(".lb-thumb").forEach((t, i) => {
+          t.classList.toggle("active", i === galleryIndex);
+        });
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (
+          !document.getElementById("photoLightbox").classList.contains("active")
+        )
+          return;
+        if (e.key === "Escape") closeGallery();
+        if (e.key === "ArrowLeft") galleryNav(-1);
+        if (e.key === "ArrowRight") galleryNav(1);
+      });
+    </script>
+
+    <!-- Google Maps JavaScript API -->
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfZ7_pufg1C1Da4YSwsBcgDPtgJvxuVWc&callback=initMap&language=vi&region=VN"
+    ></script>
+  </body>
+</html>

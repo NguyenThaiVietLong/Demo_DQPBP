@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geocoder - Chuyển đổi Địa chỉ → Tọa độ GPS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map-data.js"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { olive: "#556B2F" } } } };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .status-pending {
+        color: #6b7280;
+      }
+      .status-geocoding {
+        color: #f59e0b;
+      }
+      .status-found {
+        color: #10b981;
+      }
+      .status-not-found {
+        color: #ef4444;
+      }
+      .status-manual {
+        color: #3b82f6;
+      }
+      .row-highlight {
+        background-color: #fef3c7 !important;
+      }
+      #address-table::-webkit-scrollbar {
+        width: 6px;
+      }
+      #address-table::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+      .leaflet-popup-content {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+      <!-- Left Panel: Address Table -->
+      <div
+        class="w-[520px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
+      >
+        <!-- Header -->
+        <div class="p-4 bg-gradient-to-r from-olive to-olive/80 text-white">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="material-symbols-outlined text-2xl">pin_drop</span>
+            <h1 class="text-lg font-bold">Geocoder Tool</h1>
+          </div>
+          <p class="text-xs text-white/80">
+            Chuyển đổi địa chỉ → tọa độ GPS cho bản đồ dân quân
+          </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+          <div class="flex items-center gap-2 mb-2">
+            <button
+              onclick="geocodeAll()"
+              id="btn-geocode-all"
+              class="flex-1 px-3 py-2 bg-olive text-white text-sm font-bold rounded-lg hover:bg-olive/90 flex items-center justify-center gap-1.5 transition"
+            >
+              <span class="material-symbols-outlined text-base"
+                >travel_explore</span
+              >
+              Geocode tất cả
+            </button>
+            <button
+              onclick="stopGeocoding()"
+              id="btn-stop"
+              class="px-3 py-2 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 flex items-center justify-center gap-1.5 transition hidden"
+            >
+              <span class="material-symbols-outlined text-base">stop</span>
+              Dừng
+            </button>
+            <button
+              onclick="exportData()"
+              class="flex-1 px-3 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 flex items-center justify-center gap-1.5 transition"
+            >
+              <span class="material-symbols-outlined text-base">download</span>
+              Export JS
+            </button>
+          </div>
+          <!-- Progress -->
+          <div class="flex items-center gap-3 text-xs text-gray-500">
+            <span id="progress-text">0 / 0 đã geocode</span>
+            <div class="flex-1 bg-gray-200 h-1.5 rounded-full overflow-hidden">
+              <div
+                id="progress-bar"
+                class="bg-olive h-full rounded-full transition-all duration-300"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instruction banner -->
+        <div
+          class="px-4 py-2 bg-blue-50 border-b border-blue-100 text-xs text-blue-700 flex items-start gap-2"
+        >
+          <span class="material-symbols-outlined text-sm mt-0.5">info</span>
+          <span
+            ><strong>Hướng dẫn:</strong> Bấm "Geocode tất cả" để tự động tra
+            cứu. Sau đó <strong>kéo thả marker</strong> trên bản đồ để hiệu
+            chỉnh vị trí chính xác. Bấm vào hàng để xem trên bản đồ.</span
+          >
+        </div>
+
+        <!-- Address Table -->
+        <div id="address-table" class="flex-1 overflow-y-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th
+                  class="px-3 py-2 text-left text-xs font-bold text-gray-500 w-8"
+                >
+                  #
+                </th>
+                <th class="px-3 py-2 text-left text-xs font-bold text-gray-500">
+                  Tên / Địa chỉ
+                </th>
+                <th
+                  class="px-3 py-2 text-left text-xs font-bold text-gray-500 w-28"
+                >
+                  Tọa độ
+                </th>
+                <th
+                  class="px-3 py-2 text-center text-xs font-bold text-gray-500 w-10"
+                >
+                  ⚡
+                </th>
+              </tr>
+            </thead>
+            <tbody id="address-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: Map -->
+      <div class="flex-1 relative">
+        <div id="map" class="w-full h-full"></div>
+
+        <!-- Search box on map -->
+        <div
+          class="absolute top-4 left-14 z-[1000] bg-white rounded-lg shadow-lg border border-gray-200 p-3 w-80"
+        >
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-gray-400 text-lg"
+              >search</span
+            >
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Tìm địa chỉ thủ công..."
+              class="flex-1 text-sm border-none outline-none bg-transparent"
+              onkeydown="if (event.key === 'Enter') searchAddress();"
+            />
+            <button
+              onclick="searchAddress()"
+              class="text-olive font-semibold text-xs hover:underline"
+            >
+              Tìm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===== State =====
+      let map,
+        members = [],
+        markers = [],
+        searchMarker = null;
+      let geocodeRunning = false,
+        geocodeIndex = 0;
+      let selectedRow = -1;
+
+      // ===== Initialize =====
+      window.addEventListener("DOMContentLoaded", () => {
+        // Clone data from map-data.js
+        members = mapMembers.map((m, i) => ({
+          ...m,
+          index: i,
+          originalLat: m.lat,
+          originalLng: m.lng,
+          status: m.lat && m.lng ? "existing" : "pending",
+          geocodedLat: null,
+          geocodedLng: null,
+        }));
+
+        initMap();
+        renderTable();
+        addAllMarkers();
+      });
+
+      function initMap() {
+        map = L.map("map", { center: [10.753, 106.628], zoom: 16 });
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap",
+          maxZoom: 19,
+        }).addTo(map);
+      }
+
+      // ===== Table Rendering =====
+      function renderTable() {
+        const tbody = document.getElementById("address-tbody");
+        tbody.innerHTML = "";
+        members.forEach((m, i) => {
+          const tr = document.createElement("tr");
+          tr.className = `border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${selectedRow === i ? "row-highlight" : ""}`;
+          tr.onclick = () => selectMember(i);
+
+          const statusIcon = getStatusIcon(m.status);
+          const latLng =
+            m.lat && m.lng
+              ? `<span class="text-[11px] text-gray-500">${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}</span>`
+              : `<span class="text-[11px] text-gray-400">—</span>`;
+
+          const catColor = CATEGORY_CONFIG[m.category]?.color || "#888";
+
+          tr.innerHTML = `
+            <td class="px-3 py-2 text-xs text-gray-400 align-top">${i + 1}</td>
+            <td class="px-3 py-2 align-top">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <span class="inline-block w-2 h-2 rounded-full flex-shrink-0" style="background:${catColor}"></span>
+                <span class="font-semibold text-gray-800 text-xs">${m.name}</span>
+              </div>
+              <p class="text-[11px] text-gray-500 leading-tight">${m.address}</p>
+            </td>
+            <td class="px-3 py-2 align-top">${latLng}</td>
+            <td class="px-3 py-2 text-center align-top">
+              <button onclick="event.stopPropagation(); geocodeSingle(${i})"
+                class="text-olive hover:text-olive/70 transition" title="Geocode này">
+                <span class="material-symbols-outlined text-base">travel_explore</span>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        updateProgress();
+      }
+
+      function getStatusIcon(status) {
+        switch (status) {
+          case "found":
+            return '<span class="material-symbols-outlined text-sm status-found">check_circle</span>';
+          case "not-found":
+            return '<span class="material-symbols-outlined text-sm status-not-found">error</span>';
+          case "manual":
+            return '<span class="material-symbols-outlined text-sm status-manual">pan_tool</span>';
+          case "geocoding":
+            return '<span class="material-symbols-outlined text-sm status-geocoding animate-spin">progress_activity</span>';
+          case "existing":
+            return '<span class="material-symbols-outlined text-sm text-gray-400">radio_button_unchecked</span>';
+          default:
+            return '<span class="material-symbols-outlined text-sm status-pending">schedule</span>';
+        }
+      }
+
+      // ===== Markers =====
+      function addAllMarkers() {
+        markers.forEach((m) => {
+          if (m) map.removeLayer(m);
+        });
+        markers = [];
+
+        members.forEach((m, i) => {
+          if (!m.lat || !m.lng) {
+            markers.push(null);
+            return;
+          }
+
+          const catColor = CATEGORY_CONFIG[m.category]?.color || "#888";
+          const marker = L.marker([m.lat, m.lng], {
+            draggable: true,
+            icon: createSmallMarker(catColor),
+          }).addTo(map);
+
+          marker.bindTooltip(`${m.name}`, {
+            direction: "top",
+            offset: [0, -20],
+          });
+
+          marker.on("dragend", (e) => {
+            const pos = e.target.getLatLng();
+            members[i].lat = Math.round(pos.lat * 10000) / 10000;
+            members[i].lng = Math.round(pos.lng * 10000) / 10000;
+            members[i].status = "manual";
+            renderTable();
+          });
+
+          markers.push(marker);
+        });
+      }
+
+      function createSmallMarker(color) {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 30" width="22" height="33">
+          <path d="M10 0C4.5 0 0 4.5 0 10c0 7.5 10 20 10 20s10-12.5 10-20C20 4.5 15.5 0 10 0z"
+            fill="${color}" stroke="white" stroke-width="1.5"/>
+          <circle cx="10" cy="9" r="4" fill="white" opacity="0.9"/>
+          <circle cx="10" cy="9" r="2.5" fill="${color}"/>
+        </svg>`;
+        return L.divIcon({
+          html: svg,
+          className: "",
+          iconSize: [22, 33],
+          iconAnchor: [11, 33],
+          popupAnchor: [0, -28],
+        });
+      }
+
+      function updateMarker(index) {
+        const m = members[index];
+        if (!m.lat || !m.lng) return;
+
+        if (markers[index]) map.removeLayer(markers[index]);
+
+        const catColor = CATEGORY_CONFIG[m.category]?.color || "#888";
+        const marker = L.marker([m.lat, m.lng], {
+          draggable: true,
+          icon: createSmallMarker(catColor),
+        }).addTo(map);
+
+        marker.bindTooltip(`${m.name}`, { direction: "top", offset: [0, -20] });
+
+        marker.on("dragend", (e) => {
+          const pos = e.target.getLatLng();
+          members[index].lat = Math.round(pos.lat * 10000) / 10000;
+          members[index].lng = Math.round(pos.lng * 10000) / 10000;
+          members[index].status = "manual";
+          renderTable();
+        });
+
+        markers[index] = marker;
+      }
+
+      // ===== Select & Focus =====
+      function selectMember(index) {
+        selectedRow = index;
+        const m = members[index];
+        if (m.lat && m.lng) {
+          map.setView([m.lat, m.lng], 18, { animate: true });
+          if (markers[index]) markers[index].openTooltip();
+        }
+        renderTable();
+        // Scroll row into view
+        const rows = document.querySelectorAll("#address-tbody tr");
+        if (rows[index]) rows[index].scrollIntoView({ block: "nearest" });
+      }
+
+      // ===== Geocoding =====
+      async function nominatimGeocode(address) {
+        // Enhance address with area context for better results
+        let query = address;
+        if (
+          !query.includes("TP") &&
+          !query.includes("Hồ Chí Minh") &&
+          !query.includes("HCM")
+        ) {
+          query += ", TP. Hồ Chí Minh, Việt Nam";
+        }
+
+        const url =
+          `https://nominatim.openstreetmap.org/search?` +
+          `q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=vn&viewbox=106.60,10.77,106.66,10.73&bounded=1`;
+
+        try {
+          const res = await fetch(url, {
+            headers: {
+              "Accept-Language": "vi",
+              "User-Agent": "DQP10-Geocoder/1.0",
+            },
+          });
+          const data = await res.json();
+          if (data.length > 0) {
+            return {
+              lat: parseFloat(data[0].lat),
+              lng: parseFloat(data[0].lon),
+              display: data[0].display_name,
+            };
+          }
+
+          // Fallback: try simpler query (street name only)
+          const simplified = simplifyAddress(address);
+          if (simplified !== query) {
+            const url2 =
+              `https://nominatim.openstreetmap.org/search?` +
+              `q=${encodeURIComponent(simplified + ", Quận 6, TP. Hồ Chí Minh")}&format=json&limit=1&countrycodes=vn`;
+            const res2 = await fetch(url2, {
+              headers: {
+                "Accept-Language": "vi",
+                "User-Agent": "DQP10-Geocoder/1.0",
+              },
+            });
+            const data2 = await res2.json();
+            if (data2.length > 0) {
+              return {
+                lat: parseFloat(data2[0].lat),
+                lng: parseFloat(data2[0].lon),
+                display: data2[0].display_name,
+              };
+            }
+          }
+
+          return null;
+        } catch (err) {
+          console.error("Geocode error:", err);
+          return null;
+        }
+      }
+
+      function simplifyAddress(addr) {
+        // Extract street name: "19I Lý Chiêu Hoàng, P10" → "Lý Chiêu Hoàng"
+        // "56U Cư Xá Phú Lâm D, P10" → "Cư Xá Phú Lâm D"
+        let clean = addr
+          .replace(/,?\s*P(hường)?\s*\d+/gi, "")
+          .replace(/,?\s*Q(uận)?\s*\d+/gi, "")
+          .trim();
+        // Remove house number prefix
+        clean = clean.replace(/^\d+[A-Za-z]*\s*(Lô\s*[A-Z]\s*)?/i, "").trim();
+        // Remove "Bis" suffix
+        clean = clean.replace(/\s*Bis\b/i, "").trim();
+        // Remove "Đường" prefix
+        clean = clean.replace(/^(Đường\s*)/i, "").trim();
+        return clean;
+      }
+
+      async function geocodeSingle(index) {
+        const m = members[index];
+        m.status = "geocoding";
+        renderTable();
+
+        const result = await nominatimGeocode(m.address);
+
+        if (result) {
+          m.lat = Math.round(result.lat * 10000) / 10000;
+          m.lng = Math.round(result.lng * 10000) / 10000;
+          m.geocodedLat = m.lat;
+          m.geocodedLng = m.lng;
+          m.status = "found";
+          updateMarker(index);
+        } else {
+          m.status = "not-found";
+        }
+
+        renderTable();
+        if (m.lat && m.lng) {
+          map.setView([m.lat, m.lng], 18, { animate: true });
+        }
+      }
+
+      async function geocodeAll() {
+        geocodeRunning = true;
+        document.getElementById("btn-geocode-all").classList.add("hidden");
+        document.getElementById("btn-stop").classList.remove("hidden");
+
+        for (let i = 0; i < members.length; i++) {
+          if (!geocodeRunning) break;
+
+          geocodeIndex = i;
+          const m = members[i];
+          m.status = "geocoding";
+          renderTable();
+          selectMember(i);
+
+          const result = await nominatimGeocode(m.address);
+
+          if (result) {
+            m.lat = Math.round(result.lat * 10000) / 10000;
+            m.lng = Math.round(result.lng * 10000) / 10000;
+            m.geocodedLat = m.lat;
+            m.geocodedLng = m.lng;
+            m.status = "found";
+            updateMarker(i);
+            map.setView([m.lat, m.lng], 17, { animate: true });
+          } else {
+            m.status = "not-found";
+          }
+
+          renderTable();
+
+          // Rate limit: Nominatim requires max 1 req/sec
+          if (i < members.length - 1 && geocodeRunning) {
+            await new Promise((r) => setTimeout(r, 1100));
+          }
+        }
+
+        geocodeRunning = false;
+        document.getElementById("btn-geocode-all").classList.remove("hidden");
+        document.getElementById("btn-stop").classList.add("hidden");
+      }
+
+      function stopGeocoding() {
+        geocodeRunning = false;
+        document.getElementById("btn-geocode-all").classList.remove("hidden");
+        document.getElementById("btn-stop").classList.add("hidden");
+      }
+
+      function updateProgress() {
+        const total = members.length;
+        const done = members.filter(
+          (m) =>
+            m.status === "found" ||
+            m.status === "manual" ||
+            m.status === "existing",
+        ).length;
+        document.getElementById("progress-text").textContent =
+          `${done} / ${total} có tọa độ`;
+        document.getElementById("progress-bar").style.width =
+          `${(done / total) * 100}%`;
+      }
+
+      // ===== Manual Search =====
+      async function searchAddress() {
+        const input = document.getElementById("search-input");
+        const query = input.value.trim();
+        if (!query) return;
+
+        const result = await nominatimGeocode(query);
+        if (result) {
+          if (searchMarker) map.removeLayer(searchMarker);
+          searchMarker = L.marker([result.lat, result.lng], {
+            icon: L.divIcon({
+              html: `<div style="background:#ef4444;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">📍</div>`,
+              className: "",
+              iconSize: [28, 28],
+              iconAnchor: [14, 14],
+            }),
+          }).addTo(map);
+          searchMarker
+            .bindPopup(
+              `<strong>Kết quả tìm kiếm</strong><br><small>${result.display}</small><br><code>${result.lat.toFixed(6)}, ${result.lng.toFixed(6)}</code>`,
+            )
+            .openPopup();
+          map.setView([result.lat, result.lng], 18);
+        } else {
+          alert("Không tìm thấy địa chỉ: " + query);
+        }
+      }
+
+      // ===== Export =====
+      function exportData() {
+        let js = "// Map Data - Updated with geocoded coordinates\n";
+        js += "// Generated: " + new Date().toISOString() + "\n\n";
+
+        // Export CATEGORY_CONFIG
+        js += "const CATEGORY_CONFIG = {\n";
+        for (const [key, cfg] of Object.entries(CATEGORY_CONFIG)) {
+          js += `  '${key}': { color: '${cfg.color}', icon: '${cfg.icon}', label: '${cfg.label}', description: '${cfg.description}' },\n`;
+        }
+        js += "};\n\n";
+
+        // Export members
+        js += "const mapMembers = [\n";
+        members.forEach((m) => {
+          js += `  { name: "${m.name}", dob: "${m.dob}", year: ${m.year}, category: "${m.category}", `;
+          js += `address: "${m.address}", note: "${m.note || ""}", kp: "${m.kp || ""}", `;
+          js += `lat: ${m.lat || 0}, lng: ${m.lng || 0} },\n`;
+        });
+        js += "];\n";
+
+        // Download
+        const blob = new Blob([js], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "map-data.js";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
+</html>
